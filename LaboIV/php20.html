@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html>
+
+
+
+	<head>
+		<title>Ejercicio DB Lista</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+		<style>
+			
+			html, body{
+				height:100%;
+				width:100%;
+				margin:0%;
+				
+			}
+
+			div.headfoot1{
+				
+				float:left;
+				background-color:lightgreen;
+				width:100%;
+				height: 10%;
+				display:flex;
+				justify-content:center;
+				align-items:center;
+				
+			}
+
+			div.headfoot2{
+				
+				float:left;
+				background-color:lightgreen;
+				width:100%;
+				height: 10%;
+				display:flex;
+			
+				
+			}
+
+			h2.pie{
+				position:fixed;
+				left:45%;	
+			}
+
+			div.centro{
+				
+				width:100%;
+				overflow-x:hidden;
+				overflow-y:scroll;
+				height:70%;
+				background-color:lightgrey;
+				
+			}	
+
+			a.orden{
+				position:fixed;
+				left:70%
+			}	
+
+			input{
+				position:fixed;
+				left:70%;
+				top:6.5%;
+				width:5%;
+			}	
+			
+			button.env{
+				position:fixed;
+				width: 100px;
+				height: 60px;
+				left:78%;			
+
+			}
+
+			button.lim{
+				position:fixed;
+				width: 100px;
+				height: 60px;
+				left:87%;			
+
+			}
+
+			[campo-dato='c1']{
+			width:25px; 
+			}
+			[campo-dato='c2']{
+			width:20px; 
+			}
+			[campo-dato='c3']{
+			width:20px; 
+			}
+			[campo-dato='c4']{
+			width:40px; 
+			}
+			[campo-dato='c5']{
+			width:30px; 
+			}
+
+			thead.head{
+				background-color:lightsalmon;
+
+			}
+
+			tfoot.foot{
+				background-color:lightsalmon;
+
+			}
+
+			tr{
+				height:40px;
+			}
+
+			td{
+				height:90px;
+			}
+
+			div.foot{
+				float:left;
+				background-color:lightsalmon;
+				width:100%;
+				height: 9.5%;
+				
+
+			}
+
+
+			table.tabla{
+				width:100%; 
+				border:thin;
+				border-collapse:collapse;
+			}
+
+			tr:nth-child(even) {background-color: lightblue}
+			
+		</style>
+	</head>
+
+
+
+	<body>
+		<div class="headfoot1"><h2>Clientes</h2>
+							  <a class="orden">Orden: </a><br/>
+							  <input type="text" value="fechaAlta" readonly></input>
+							  <button  class="env" id="cargar">Cargar Datos</button>
+							  <button  class="lim" id="limpiar">Limpiar Datos</button>
+		</div>
+		
+		<div class="centro" >
+			
+			<table class="tabla">
+				<thead class="head">
+					<tr>
+						<th campo-dato='c1'>IdCliente</th>
+						<th campo-dato='c2'>Nombre cliente</th>
+						<th campo-dato='c3'>Fecha alta</th>
+						<th campo-dato='c4'>Estado</th>
+						<th campo-dato='c5'>Nacionalidad</th>
+					</tr>
+				</thead>
+
+				<tbody name='fila' id="tabla"></tbody>
+				
+			</table>				
+
+		</div>
+
+		<div class="foot">			
+			<a style="margin:8%">s IdCliente</a>
+			<a style="margin:5%">s Nombre cliente</a>
+			<a style="margin:3%">s Fecha alta</a>
+			<a style="margin:8%">s Estado</a>
+			<a style="margin:8%">s Nacionalidad</a>		
+		</div>
+		
+		<div class="headfoot2" id="pieDePagina"><h2 class="pie">Pie de tabla</h2></div>
+
+		
+		<script src="../jquery.js"></script>
+
+			
+		<script type="text/javascript">
+		
+			$(document).ready(function(){
+				$("#cargar").click(function(){
+					$("#tabla").empty();
+					
+					$("#tabla").html("<p>Esperando respuesta...</p>");
+					$("#pieDePagina").html("<h2 class='pie'>Pie de tabla</h2>");
+					
+					$.ajax({
+						type:"get",
+						//este es el php para xampp
+						url:"./salidaJsonClientes.php",
+						//este es el php para heroku
+						//url:"./salidaJsonClientes(heroku).php",
+						data:{},
+						success:function(respuestaDelServer,estado){
+							
+							$("#tabla").empty();
+
+							//parseo el objeto que recibí de respuesta
+							objJson=JSON.parse(respuestaDelServer);
+							$("#pieDePagina").html("<a>Nro de registros: " + objJson.cantidad + "</a><h2 class='pie'>Pie de tabla</h2>");
+
+							//por cada cliente del json, armo una fila en la tabla
+							objJson.clientes.forEach(function(argValor,argIndice){
+								var objTr = document.createElement("tr");
+								var objTd1 = document.createElement("td");
+								var objTd2 = document.createElement("td");
+								var objTd3 = document.createElement("td");
+								var objTd4 = document.createElement("td");
+								var objTd5 = document.createElement("td");
+
+								objTd1.setAttribute("campo-dato","c1");
+								objTd1.innerHTML=argValor.ID_CLIENTE;
+								objTr.appendChild(objTd1);
+
+								objTd2.setAttribute("campo-dato","c2");
+								objTd2.innerHTML=argValor.NOMBRE_CLIENTE;
+								objTr.appendChild(objTd2);
+
+								objTd3.setAttribute("campo-dato","c3");
+								objTd3.innerHTML=argValor.FECHA_ALTA;
+								objTr.appendChild(objTd3);
+
+								objTd4.setAttribute("campo-dato","c4");
+								objTd4.innerHTML=argValor.CODIGO_ESTADO;
+								objTr.appendChild(objTd4);
+
+								objTd5.setAttribute("campo-dato","c5");
+								objTd5.innerHTML=argValor.NACIONALIDAD;
+								objTr.appendChild(objTd5);
+
+								document.getElementById("tabla").appendChild(objTr);
+							})
+
+						}
+					});
+				});
+			});
+
+			
+			
+			document.getElementById("limpiar").onclick=function(){
+				while(document.getElementById("tabla").childNodes.length>0){
+					document.getElementById("tabla").removeChild(document.getElementById("tabla").childNodes[0]);
+				}
+				$("#pieDePagina").html("<h2 class='pie'>Pie de tabla</h2>");
+			}
+			
+
+		</script>		
+				
+	</body>
+</html>

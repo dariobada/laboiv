@@ -4,15 +4,52 @@
 
 
 
-<head>
-	<title>Super prueba</title>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-</head>
+	<head>
+		<title>Ejercicio DB Lista</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+		
+	</head>
 
 
 
-<body>
-	<h1>Prueba 222</h1>
-	
-</body>
+	<body>
+		
+
+		
+		<script src="./jquery.js"></script>
+
+			
+		<script type="text/javascript">
+		
+			$(document).ready(function(){
+													
+					$.ajax({
+						type:"get",
+						//este es el php para xampp
+						url:"./salidaJsonCliente.php",
+						//este es el php para heroku
+						//url:"./salidaJsonClientes(heroku).php",
+						data:{},
+						success:function(respuestaDelServer,estado){
+							
+							//parseo el objeto que recibí de respuesta
+							objJson=JSON.parse(respuestaDelServer);
+						
+
+							//por cada cliente del json, armo una fila en la tabla
+							alert("nombre de usaurio: " + objJson.nombre_usuario);
+
+						}
+					});
+				});
+			
+
+			
+			
+			
+
+		</script>		
+				
+	</body>
 </html>
